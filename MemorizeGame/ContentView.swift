@@ -12,28 +12,38 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("得分：")
-                Text("100")
-            }
-            .foregroundColor(Color.orange)
-            .font(.largeTitle)
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
-                    ForEach(viewModel.cards) {
-                        card in
-                        CardView(card: card)
-                            .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                            .onTapGesture {
-                                viewModel.choose(card)
-                            }
-                    }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
+                ForEach(viewModel.cards) {
+                    card in
+                    CardView(card: card)
+                        .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                        .onTapGesture {
+                            viewModel.choose(card)
+                        }
                 }
+            }.foregroundColor(.orange)
+            Spacer()
+            HStack {
+                Spacer()
+                Button(action: {
+                    viewModel.reset()
+                }, label: {
+                    Text("重新开始")
+                        .padding()
+                        .background(Color.white)
+                        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+                        .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                        .cornerRadius(3)
+                })
             }
-            .padding()
-            .foregroundColor(.orange)
         }
-
+        .padding()
+        .onTapGesture {
+            if viewModel.isFinish() == true {
+                viewModel.reset()
+            }
+        }
+        
     }
 }
 
@@ -46,6 +56,8 @@ struct CardView: View {
                 shape.fill(Color.white)
                 shape.strokeBorder(lineWidth: 3)
                 Text(card.content).font(.largeTitle)
+            } else if card.isMatched == true {
+                shape.opacity(0)
             } else {
                 shape.fill(Color.orange)
             }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MemoryGame<CardContent> {
+struct MemoryGame<CardContent> where CardContent: Equatable {
     struct Card: Identifiable{
         var id: Int
         var isFaceUp: Bool = false
@@ -16,6 +16,7 @@ struct MemoryGame<CardContent> {
     }
     
     private(set) var cards: Array<Card>
+    private var firstChooseIndex: Int?
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int)->CardContent) {
         cards = Array<Card>()
@@ -23,20 +24,45 @@ struct MemoryGame<CardContent> {
             cards.append(Card(id: pairdIndex*2, content: createCardContent(pairdIndex)))
             cards.append(Card(id: pairdIndex*2+1, content: createCardContent(pairdIndex)))
         }
+        cards = cards.shuffled()
+    }
+    
+    mutating func reset() {
+        for index in cards.indices {
+            cards[index].isFaceUp = false
+            cards[index].isMatched = false
+        }
+        cards = cards.shuffled()
     }
     
     mutating func choose(_ card: Card) {
-        let chosenIndex = index(of: card)
-        cards[chosenIndex].isFaceUp.toggle()
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
+           !cards[chosenIndex].isMatched,
+           !cards[chosenIndex].isFaceUp {
+            if let fci = firstChooseIndex {
+                if card.content == cards[fci].content {
+                    cards[chosenIndex].isMatched = true
+                    cards[fci].isMatched = true
+                    
+                }
+                firstChooseIndex = nil
+            } else {
+                for index in cards.indices {
+                    cards[index].isFaceUp = false
+                }
+                firstChooseIndex = chosenIndex
+            }
+            cards[chosenIndex].isFaceUp.toggle()
+        }
         print("choose card: \(card)")
     }
     
-    func index(of card: Card) -> Int {
-        for index in 0..<cards.count {
-            if cards[index].id == card.id {
-                return index
+    mutating func isFinish() -> Bool {
+        for index in cards.indices {
+            if cards[index].isMatched == false {
+                return false
             }
         }
-        return 0
+        return true
     }
 }
