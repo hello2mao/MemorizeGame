@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MemoryGameView: View {
     @ObservedObject var viewModel: ViewModel
+    @State private var showFinishSheet = false
     
     var body: some View {
         VStack {
@@ -19,9 +20,25 @@ struct MemoryGameView: View {
                         .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
                         .onTapGesture {
                             viewModel.choose(card)
+                            if viewModel.isFinish == true {
+                                self.showFinishSheet = true
+                            }
                         }
                 }
-            }.foregroundColor(.orange)
+            }
+            .foregroundColor(.orange)
+            .actionSheet(isPresented: $showFinishSheet) {
+                ActionSheet(
+                    title: Text("啦啦啦"),
+                    message: Text("恭喜花花，通关啦"),
+                    buttons: [
+                        .default(Text("重新开始")) {
+                            self.showFinishSheet = false
+                            viewModel.reset()
+                        },
+                    ]
+                )
+            }
             Spacer()
             HStack {
                 Spacer()
@@ -38,11 +55,6 @@ struct MemoryGameView: View {
             }
         }
         .padding()
-        .onTapGesture {
-            if viewModel.isFinish() == true {
-                viewModel.reset()
-            }
-        }
         
     }
 }

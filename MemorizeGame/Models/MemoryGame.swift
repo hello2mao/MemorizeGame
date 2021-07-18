@@ -8,6 +8,7 @@
 import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
+    
     struct Card: Identifiable{
         let id: Int
         var isFaceUp: Bool = false
@@ -16,7 +17,19 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     }
     
     private(set) var cards: Array<Card>
-    private var firstChooseIndex: Int?
+    private var firstChooseIndex: Int? {
+        get { cards.indices.filter({ cards[$0].isFaceUp}).oneAndOnly }
+        set { cards.indices.forEach( {cards[$0].isFaceUp = ($0 == newValue)} )}
+    }
+    
+    var isFinish: Bool {
+        for index in cards.indices {
+            if cards[index].isMatched == false {
+                return false
+            }
+        }
+        return true
+    }
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int)->CardContent) {
         cards = Array<Card>()
@@ -24,15 +37,15 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(id: pairdIndex*2, content: createCardContent(pairdIndex)))
             cards.append(Card(id: pairdIndex*2+1, content: createCardContent(pairdIndex)))
         }
-        cards = cards.shuffled()
+//        cards = cards.shuffled()
     }
     
     mutating func reset() {
-        for index in cards.indices {
-            cards[index].isFaceUp = false
-            cards[index].isMatched = false
-        }
-        cards = cards.shuffled()
+        cards.indices.forEach({
+            cards[$0].isFaceUp = false
+            cards[$0].isMatched = false
+        })
+//        cards = cards.shuffled()
     }
      
     mutating func choose(_ card: Card) {
@@ -45,24 +58,11 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     cards[fci].isMatched = true
                     
                 }
-                firstChooseIndex = nil
+                cards[chosenIndex].isFaceUp = true
             } else {
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
                 firstChooseIndex = chosenIndex
             }
-            cards[chosenIndex].isFaceUp.toggle()
         }
         print("choose card: \(card)")
-    }
-    
-    mutating func isFinish() -> Bool {
-        for index in cards.indices {
-            if cards[index].isMatched == false {
-                return false
-            }
-        }
-        return true
     }
 }

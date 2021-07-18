@@ -11,6 +11,8 @@ import SwiftUI
 
 extension MemoryGameView {
     class ViewModel: ObservableObject {
+        
+        typealias Card = MemoryGame<String>.Card
         private static var emojis = ["🌵", "🦨", "🍄", "🐶", "🐸", "🐝", "🙈", "🐖", "🐛", "🍩", "🍓", "🐞", "🐬", "🐯", "🌝", "💍", "👻", "🩴", "😎", "👜", "🐁"].shuffled()
         
         @Published private var model = MemoryGame<String>(numberOfPairsOfCards: 8) {
@@ -18,10 +20,9 @@ extension MemoryGameView {
             emojis[pairIndex]
         }
         
-        var cards: Array<MemoryGame<String>.Card> {
-            model.cards
-        }
+        var cards: Array<MemoryGame<String>.Card> { model.cards }
         
+        var isFinish: Bool { model.isFinish }
         
         // MARK: - Intent(s)
         
@@ -33,9 +34,7 @@ extension MemoryGameView {
             model.reset()
         }
         
-        func isFinish() -> Bool {
-            return model.isFinish()
-        }
+
     }
 }
 

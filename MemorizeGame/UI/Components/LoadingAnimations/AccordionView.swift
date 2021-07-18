@@ -41,15 +41,15 @@ struct AccordionView: View {
 
 struct AccordionViewPreviewContainer : View {
     @State private var isAnimate = false
-
-     var body: some View {
+    
+    var body: some View {
         HStack {
             AccordionView(isAnimationState: $isAnimate)
         }
         .onAppear {
             self.isAnimate.toggle()
         }
-     }
+    }
 }
 
 struct AccordionView_Previews: PreviewProvider {
