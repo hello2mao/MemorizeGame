@@ -30,6 +30,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
         return true
     }
+    var stepNum: Int = 0
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int)->CardContent) {
         cards = Array<Card>()
@@ -37,15 +38,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(id: pairdIndex*2, content: createCardContent(pairdIndex)))
             cards.append(Card(id: pairdIndex*2+1, content: createCardContent(pairdIndex)))
         }
-//        cards = cards.shuffled()
-    }
-    
-    mutating func reset() {
-        cards.indices.forEach({
-            cards[$0].isFaceUp = false
-            cards[$0].isMatched = false
-        })
-//        cards = cards.shuffled()
+        cards = cards.shuffled()
     }
      
     mutating func choose(_ card: Card) {
@@ -62,6 +55,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             } else {
                 firstChooseIndex = chosenIndex
             }
+            stepNum += 1
         }
         print("choose card: \(card)")
     }

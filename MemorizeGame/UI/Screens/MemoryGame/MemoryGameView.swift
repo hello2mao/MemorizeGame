@@ -13,6 +13,9 @@ struct MemoryGameView: View {
     
     var body: some View {
         VStack {
+            Text("步数：\(viewModel.stepNum)")
+                .font(.largeTitle)
+                .foregroundColor(.orange)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
                 ForEach(viewModel.cards) {
                     card in
@@ -29,8 +32,8 @@ struct MemoryGameView: View {
             .foregroundColor(.orange)
             .actionSheet(isPresented: $showFinishSheet) {
                 ActionSheet(
-                    title: Text("啦啦啦"),
-                    message: Text("恭喜花花，通关啦"),
+                    title: Text("啦啦啦").font(.largeTitle),
+                    message: Text("恭喜花花，通关啦，步数：\(viewModel.stepNum)"),
                     buttons: [
                         .default(Text("重新开始")) {
                             self.showFinishSheet = false
@@ -55,6 +58,7 @@ struct MemoryGameView: View {
             }
         }
         .padding()
+        .navigationBarHidden(true)
         
     }
 }
