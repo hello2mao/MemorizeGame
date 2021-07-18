@@ -9,10 +9,10 @@ import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
     struct Card: Identifiable{
-        var id: Int
+        let id: Int
         var isFaceUp: Bool = false
         var isMatched: Bool = false
-        var content: CardContent
+        let content: CardContent
     }
     
     private(set) var cards: Array<Card>
@@ -34,7 +34,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
         cards = cards.shuffled()
     }
-    
+     
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
            !cards[chosenIndex].isMatched,

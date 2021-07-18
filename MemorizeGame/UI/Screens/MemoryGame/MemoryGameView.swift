@@ -1,14 +1,14 @@
 //
-//  ContentView.swift
+//  MemoryGameView.swift
 //  MemorizeGame
 //
-//  Created by 毛宏斌 on 2021/7/11.
+//  Created by 毛宏斌 on 2021/7/14.
 //
 
 import SwiftUI
 
-struct ContentView: View {
-    @ObservedObject var viewModel: EmojiMemoryGame
+struct MemoryGameView: View {
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         VStack {
@@ -47,28 +47,14 @@ struct ContentView: View {
     }
 }
 
-struct CardView: View {
-    let card: MemoryGame<String>.Card
-    var body: some View {
-        ZStack {
-            let shape = RoundedRectangle(cornerRadius: 10)
-            if card.isFaceUp {
-                shape.fill(Color.white)
-                shape.strokeBorder(lineWidth: 3)
-                Text(card.content).font(.largeTitle)
-            } else if card.isMatched == true {
-                shape.opacity(0)
-            } else {
-                shape.fill(Color.orange)
-            }
-        }
-    }
-    
-}
+// MARK: - Preview
 
-struct ContentView_Previews: PreviewProvider {
+struct MemoryGameView_Previews: PreviewProvider {
     static var previews: some View {
-        let game = EmojiMemoryGame()
-        ContentView(viewModel: game)
+        NavigationView {
+            MemoryGameView(viewModel: .init())
+                .navigationBarTitle(Text("MemorizeGame"), displayMode: .inline)
+        }
+       
     }
 }
