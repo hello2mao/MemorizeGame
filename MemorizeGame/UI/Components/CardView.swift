@@ -12,17 +12,15 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                let shape = RoundedRectangle(cornerRadius: 10)
-                if card.isFaceUp {
-                    shape.fill(Color.white)
-                    shape.strokeBorder(lineWidth: 3)
-                    Text(card.content).font(font(in: geometry.size))
-                } else if card.isMatched == true {
-                    shape.opacity(0)
-                } else {
-                    shape.fill(Color.orange)
-                }
+                Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 110-90))
+                    .padding(5)
+                    .opacity(0)
+                Text(card.content)
+                    .font(font(in: geometry.size))
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    .animation(.linear(duration: 1))
             }
+            .cardify(isFaceUp: card.isFaceUp)
         }
     }
     
@@ -31,9 +29,7 @@ struct CardView: View {
     }
     
     private struct DrawingConstants {
-        static let cornerRadius: CGFloat = 10
-        static let lineWidth: CGFloat = 3
-        static let fontScale: CGFloat = 0.5
+        static let fontScale: CGFloat = 0.7
     }
 }
 
@@ -41,16 +37,11 @@ struct CardView: View {
 
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
-            ForEach(0..<16) {
-                index in
-                let card = MemoryGame<String>.Card(id: 1, isFaceUp: true, content: "👻")
-                CardView(card: card)
-                    .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-            }
-        }
-        .padding()
-        .foregroundColor(.orange)
+        let card = MemoryGame<String>.Card(id: 1, isFaceUp: true, content: "👻")
+        CardView(card: card)
+            .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+            .foregroundColor(.orange)
+            .padding()
         
     }
 }

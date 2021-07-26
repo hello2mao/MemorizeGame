@@ -16,13 +16,15 @@ struct MemoryGameView: View {
             Text("步数：\(viewModel.stepNum)")
                 .font(.largeTitle)
                 .foregroundColor(.orange)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
-                ForEach(viewModel.cards) {
-                    card in
+            AspectVGrid(items: viewModel.cards, aspectRatio: 2/3) { card in
+                if card.isMatched && !card.isFaceUp  {
+                    Color.clear
+                } else {
                     CardView(card: card)
-                        .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
                         .onTapGesture {
-                            viewModel.choose(card)
+                            withAnimation(.linear(duration: 0.5)) {
+                                viewModel.choose(card)
+                            }
                             if viewModel.isFinish == true {
                                 self.showFinishSheet = true
                             }
@@ -36,8 +38,10 @@ struct MemoryGameView: View {
                     message: Text("恭喜花花，通关啦，步数：\(viewModel.stepNum)"),
                     buttons: [
                         .default(Text("重新开始")) {
-                            self.showFinishSheet = false
-                            viewModel.reset()
+                            withAnimation {
+                                self.showFinishSheet = false
+                                viewModel.reset()
+                            }
                         },
                     ]
                 )
@@ -46,7 +50,9 @@ struct MemoryGameView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    viewModel.reset()
+                    withAnimation {
+                        viewModel.reset()
+                    }
                 }, label: {
                     Text("重新开始")
                         .padding()
